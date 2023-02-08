@@ -2,6 +2,7 @@ use regex::Regex;
 use std::error::Error;
 use std::{fs, usize};
 
+
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
@@ -124,7 +125,8 @@ pub fn run_shows(
     let mut num_lignes: Vec<usize> = Vec::new();
 
     for (i, line) in contents.lines().enumerate() {
-        if from.map_or(true, |f| i >= f) && to.map_or(true, |t| i <= t && !results.contains(&line))
+        if from.map_or(true, |f| i >= f) && to.map_or(true, |t| i <= t
+            && !results.contains(&line))
         {
             num_lignes.push(i);
             results.push(line);
