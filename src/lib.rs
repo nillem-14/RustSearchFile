@@ -1,7 +1,6 @@
 use regex::Regex;
 use std::error::Error;
-use std::{fs, usize};
-
+use std::{fs, process, usize};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
@@ -52,57 +51,45 @@ impl Config {
             return Err("Not enough arguments \n -h for help");
         }
         let filename = args[1].clone();
-
         let mut case_sensitive = false;
         let mut query = None;
         let mut from = None;
         let mut to = None;
         let mut after = 0;
         let mut before = 0;
-
         let mut i = 2;
 
         while i < args.len() {
-            match args[i].as_ref() {
-                "-s" | "-search" => {
-                    if i + 1 >= args.len() {
-                        return Err("Not enough arguments \n h for help");
+            if let Err(err) = len_args(args, i) {
+                println!("{}", err);
+                process::exit(1);
+            } else {
+                match args[i].as_ref() {
+                    "-s" | "-search" => {
+                        query = Some(args[i + 1].clone());
+                        i += 1;
                     }
-                    query = Some(args[i + 1].clone());
-                    i += 1;
-                }
-                "-i" | "-insensitive" => case_sensitive = true,
-                "-from" => {
-                    if i + 1 >= args.len() {
-                        return Err("not enough arguments \n h for help");
+                    "-i" | "-insensitive" => case_sensitive = true,
+                    "-from" => {
+                        from = Some(args[i + 1].parse().unwrap());
+                        i += 1;
                     }
-                    from = Some(args[i + 1].parse().unwrap());
-                    i += 1;
-                }
-                "-to" => {
-                    if i + 1 >= args.len() {
-                        return Err("not enough arguments \n h for help");
+                    "-to" => {
+                        to = Some(args[i + 1].parse().unwrap());
+                        i += 1;
                     }
-                    to = Some(args[i + 1].parse().unwrap());
-                    i += 1;
-                }
-                "-a" => {
-                    if i + 1 >= args.len() {
-                        return Err("not enough arguments \n h for help");
+                    "-a" => {
+                        after = args[i + 1].parse().unwrap();
+                        i += 1;
                     }
-                    after = args[i + 1].parse().unwrap();
-                    i += 1;
-                }
-                "-b" => {
-                    if i + 1 >= args.len() {
-                        return Err("not enough arguments \n h for help");
+                    "-b" => {
+                        before = args[i + 1].parse().unwrap();
+                        i += 1;
                     }
-                    before = args[i + 1].parse().unwrap();
-                    i += 1;
+                    _ => return Err("invalid argument format \n h for help"),
                 }
-                _ => return Err("invalid argument format \n h for help"),
+                i += 1;
             }
-            i += 1;
         }
         Ok(Config {
             filename,
@@ -116,6 +103,13 @@ impl Config {
     }
 }
 
+pub fn len_args(args: &[String], i: usize) -> Result<(), &'static str> {
+    if i + 1 >= args.len() {
+        return Err("not enough arguments \n -h for help");
+    }
+    Ok(())
+}
+
 pub fn run_shows(
     contents: &str,
     from: Option<usize>,
@@ -125,8 +119,7 @@ pub fn run_shows(
     let mut num_lignes: Vec<usize> = Vec::new();
 
     for (i, line) in contents.lines().enumerate() {
-        if from.map_or(true, |f| i >= f) && to.map_or(true, |t| i <= t
-            && !results.contains(&line))
+        if from.map_or(true, |f| i >= f) && to.map_or(true, |t| i <= t && !results.contains(&line))
         {
             num_lignes.push(i);
             results.push(line);
