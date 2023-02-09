@@ -2,8 +2,6 @@
 
 ## How to use it : 
 
-### Linux 
-
 Run
 
 `<filePath> [-s <searched word or regex>] [-i/-insensitive] [-from <line usize>] [-to <line usize>] [-b <number of lines before>] [-a <number of lines after>]`
@@ -15,11 +13,6 @@ Help
 Version 
 
 `-version (-v)`
-
-
-### windows 
-
-Same but with the .exe file
 
 
 Note : 
