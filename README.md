@@ -6,7 +6,14 @@
 
 Run
 
-`<filePath> [-s <searched word or regex>] [-i/-insensitive] [-from <line usize>] [-to <line usize>] [-b <number of lines before>] [-a <number of lines after>] \n Help : -help (-h) \n Version: -version (-v)`
+`<filePath> [-s <searched word or regex>] [-i/-insensitive] [-from <line usize>] [-to <line usize>] [-b <number of lines before>] [-a <number of lines after>]`
+
+Help 
+` -help (-h)`
+
+Version 
+`-version (-v)`
+
 
 ### windows 
 
