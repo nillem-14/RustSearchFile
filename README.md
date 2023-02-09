@@ -10,3 +10,7 @@ Run
 
 Note : 
 The arguments -a and -b allow to display a number of lines before and after the searched line. 
+
+### windows 
+
+Same but with the .exe file
