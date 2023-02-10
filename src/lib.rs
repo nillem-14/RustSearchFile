@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::error::Error;
 use std::{fs, process, usize};
+use ansi_term::Colour::Cyan;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
@@ -86,7 +87,7 @@ impl Config {
                         before = args[i + 1].parse().unwrap();
                         i += 1;
                     }
-                    _ => return Err("invalid argument format \n h for help"),
+                    _ => return Err("invalid argument format \n -h for help"),
                 }
                 i += 1;
             }
@@ -136,7 +137,7 @@ pub fn search<'a>(
     before: usize,
     after: usize,
     case_sensitive: bool,
-) -> (Vec<&'a str>, Vec<usize>) {
+) -> (Vec<String>, Vec<usize>) {
     let mut results = Vec::new();
     let mut num_lignes: Vec<usize> = Vec::new();
     let re = if case_sensitive {
@@ -146,9 +147,9 @@ pub fn search<'a>(
     };
 
     for (i, line) in contents.lines().enumerate() {
-        if from.map_or(true, |f| i >= *f) && to.map_or(true, |t| i <= *t) && re.is_match(line) {
+        if from.map_or(true, |f| i >= *f) && to.map_or(true, |t| i <= *t) && re.is_match(line){
             let mut edge: usize = 0;
-            let mut edge_final: usize = contents.lines().count();
+            let mut edge_final: usize = contents.lines().count()-1;
             if before < i {
                 edge = i - before;
             }
@@ -158,7 +159,14 @@ pub fn search<'a>(
             for j in edge..edge_final + 1 {
                 if !num_lignes.contains(&j) {
                     num_lignes.push(j);
-                    results.push(contents.lines().nth(j).unwrap());
+                    let line = contents.lines().nth(j).unwrap();
+                    if re.is_match(&line){
+                        let colored = format!("{}", Cyan.paint(line));
+                        results.push(colored);
+                    }
+                    else{
+                        results.push(line.into());
+                    }
                 }
             }
         }
