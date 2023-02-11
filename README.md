@@ -19,4 +19,4 @@ Note :
 The arguments -a and -b allow to display a number of lines before and after the searched line. 
 
 Note 2: 
-Support only .txt and .log
+Supports only .txt and .log
